@@ -5,6 +5,7 @@ edition = "2021"
 repository = "https://github.com/amrhassan/fieldwise-rs"
 homepage = "https://github.com/amrhassan/fieldwise-rs"
 license = "MIT"
+description = "Derived field-wise conversions for Rust structs"
 
 [lib]
 proc-macro = true
