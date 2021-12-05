@@ -62,7 +62,7 @@ pub fn derive_fieldwise_from(input: proc_macro::TokenStream) -> proc_macro::Toke
     let field_mappings: Vec<TokenStream> = field_idents
         .map(|ident| {
             quote! {
-                #ident: s.#ident.into(),
+                #ident: s.#ident.into()
             }
         })
         .collect();
