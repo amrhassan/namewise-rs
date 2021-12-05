@@ -1,20 +1,20 @@
 #[derive(Clone)]
-pub struct Source {
+pub struct SourceA {
     a: String,
 }
 
 #[derive(fieldwise::From)]
-// #[fieldwise(from=Source)]
-pub struct Destination {
+#[fieldwise(from(SourceA))]
+pub struct DestinationB {
     a: String,
 }
 
 #[test]
 fn test_fieldwise_from() {
-    let source = Source { a: "A".to_string() };
+    let source = SourceA { a: "A".to_string() };
     let cloned_source = source.clone();
 
-    let destination: Destination = source.into();
+    let destination: DestinationB = source.into();
 
     assert_eq!(cloned_source.a, destination.a);
 }

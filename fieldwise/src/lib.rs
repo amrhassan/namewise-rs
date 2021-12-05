@@ -1,5 +1,5 @@
-use proc_macro2::TokenStream;
-use quote::{format_ident, quote};
+use proc_macro2::{Ident, TokenStream};
+use quote::quote;
 use syn::{parse_macro_input, DeriveInput};
 
 #[proc_macro_derive(From, attributes(fieldwise))]
@@ -8,6 +8,7 @@ pub fn derive_fieldwise_from(input: proc_macro::TokenStream) -> proc_macro::Toke
         ident: destination,
         data,
         generics,
+        attrs,
         ..
     } = parse_macro_input!(input);
 
@@ -26,7 +27,37 @@ pub fn derive_fieldwise_from(input: proc_macro::TokenStream) -> proc_macro::Toke
         .into_iter()
         .map(|field| field.ident.expect("Encountered a field without an ident"));
 
-    let source = format_ident!("Source");
+    let from_ident: Ident = attrs
+        .into_iter()
+        .flat_map(|attr| attr.parse_meta().ok())
+        .flat_map(|meta| match meta {
+            syn::Meta::List(syn::MetaList { nested, path, .. }) if path.is_ident("fieldwise") => {
+                nested.into_iter()
+            }
+            _ => panic!("Unexpected format of #[fieldwise(from(X))]"),
+        })
+        .map(|nested_meta| match nested_meta {
+            syn::NestedMeta::Meta(meta) => meta,
+            _ => panic!("Unexpected format of #[fieldwise(from(X))]"),
+        })
+        .flat_map(|meta| match meta {
+            syn::Meta::List(syn::MetaList { nested, path, .. }) if path.is_ident("from") => {
+                nested.into_iter()
+            }
+            _ => panic!("Unexpected format of #[fieldwise(from(X))]"),
+        })
+        .map(|nested_meta| match nested_meta {
+            syn::NestedMeta::Meta(meta) => meta,
+            _ => panic!("Unexpected format of #[fieldwise(from(X))]"),
+        })
+        .map(|meta| match meta {
+            syn::Meta::Path(path) => path.get_ident().cloned().unwrap(),
+            _ => panic!("Unexpected format of #[fieldwise(from(X))]"),
+        })
+        .next()
+        .expect("Missing `#[fieldwise(from(X))]` attribute");
+
+    let source = from_ident;
 
     let field_mappings: Vec<TokenStream> = field_idents
         .map(|ident| {
