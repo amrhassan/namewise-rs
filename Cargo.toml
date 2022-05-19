@@ -1,2 +1,2 @@
 [workspace]
-members = ["fieldwise", "fieldwise-tests"]
+members = ["namewise", "namewise-tests"]

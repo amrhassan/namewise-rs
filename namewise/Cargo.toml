@@ -1,11 +1,11 @@
 [package]
-name = "fieldwise"
+name = "namewise"
 version = "0.1.0"
 edition = "2021"
-repository = "https://github.com/amrhassan/fieldwise-rs"
+repository = "https://github.com/amrhassan/namewise-rs"
 homepage = "https://github.com/amrhassan/fieldwise-rs"
 license = "MIT"
-description = "Derived field-wise conversions for Rust structs"
+description = "Derived trivial name-wise conversions for Rust types"
 
 [lib]
 proc-macro = true

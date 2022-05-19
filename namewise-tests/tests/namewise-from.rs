@@ -6,8 +6,8 @@ pub struct SourceA {
     number: i16,
 }
 
-#[derive(fieldwise::From)]
-#[fieldwise(from(SourceA))]
+#[derive(namewise::From)]
+#[namewise(from(SourceA))]
 pub struct DestinationB {
     a: String,
     text: String,
@@ -15,7 +15,7 @@ pub struct DestinationB {
 }
 
 #[test]
-fn test_fieldwise_from() {
+fn test_namewise_from() {
     let source = SourceA {
         a: "A".to_string(),
         text: "arb-text",

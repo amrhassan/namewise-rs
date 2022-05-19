@@ -1,8 +1,8 @@
 [package]
-name = "fieldwise-tests"
+name = "namewise-tests"
 version = "0.0.0"
 edition = "2021"
 publish = false
 
 [dependencies]
-fieldwise = { path = "../fieldwise" }
+namewise = { path = "../namewise" }

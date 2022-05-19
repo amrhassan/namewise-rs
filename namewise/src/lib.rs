@@ -2,8 +2,8 @@ use proc_macro2::{Ident, TokenStream};
 use quote::quote;
 use syn::{parse_macro_input, DeriveInput};
 
-#[proc_macro_derive(From, attributes(fieldwise))]
-pub fn derive_fieldwise_from(input: proc_macro::TokenStream) -> proc_macro::TokenStream {
+#[proc_macro_derive(From, attributes(namewise))]
+pub fn derive_namewise_from(input: proc_macro::TokenStream) -> proc_macro::TokenStream {
     let DeriveInput {
         ident: destination,
         data,
@@ -14,12 +14,12 @@ pub fn derive_fieldwise_from(input: proc_macro::TokenStream) -> proc_macro::Toke
 
     let struct_data = match data {
         syn::Data::Struct(s) => s,
-        _ => panic!("Deriving fieldwise::From only works on structs"),
+        _ => panic!("Deriving namewise::From only works on structs"),
     };
 
     let named_fields = match struct_data.fields {
         syn::Fields::Named(f) => f,
-        _ => panic!("Deriving fieldwise::From only works on structs with named fields"),
+        _ => panic!("Deriving namewise::From only works on structs with named fields"),
     };
 
     let field_idents = named_fields
@@ -31,31 +31,31 @@ pub fn derive_fieldwise_from(input: proc_macro::TokenStream) -> proc_macro::Toke
         .into_iter()
         .flat_map(|attr| attr.parse_meta().ok())
         .flat_map(|meta| match meta {
-            syn::Meta::List(syn::MetaList { nested, path, .. }) if path.is_ident("fieldwise") => {
+            syn::Meta::List(syn::MetaList { nested, path, .. }) if path.is_ident("namewise") => {
                 nested.into_iter()
             }
-            _ => panic!("Unexpected format of #[fieldwise(from(X))]"),
+            _ => panic!("Unexpected format of #[namewise(from(X))]"),
         })
         .map(|nested_meta| match nested_meta {
             syn::NestedMeta::Meta(meta) => meta,
-            _ => panic!("Unexpected format of #[fieldwise(from(X))]"),
+            _ => panic!("Unexpected format of #[namewise(from(X))]"),
         })
         .flat_map(|meta| match meta {
             syn::Meta::List(syn::MetaList { nested, path, .. }) if path.is_ident("from") => {
                 nested.into_iter()
             }
-            _ => panic!("Unexpected format of #[fieldwise(from(X))]"),
+            _ => panic!("Unexpected format of #[namewise(from(X))]"),
         })
         .map(|nested_meta| match nested_meta {
             syn::NestedMeta::Meta(meta) => meta,
-            _ => panic!("Unexpected format of #[fieldwise(from(X))]"),
+            _ => panic!("Unexpected format of #[namewise(from(X))]"),
         })
         .map(|meta| match meta {
             syn::Meta::Path(path) => path.get_ident().cloned().unwrap(),
-            _ => panic!("Unexpected format of #[fieldwise(from(X))]"),
+            _ => panic!("Unexpected format of #[namewise(from(X))]"),
         })
         .next()
-        .expect("Missing `#[fieldwise(from(X))]` attribute");
+        .expect("Missing `#[namewise(from(X))]` attribute");
 
     let source = from_ident;
 
