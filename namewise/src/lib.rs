@@ -1,13 +1,13 @@
 use darling::FromDeriveInput;
 use proc_macro::TokenStream;
 use quote::quote;
-use syn::{parse_macro_input, DeriveInput, Field, Ident};
+use syn::{parse_macro_input, DeriveInput, Field, Ident, Variant};
 
 #[derive(FromDeriveInput)]
 #[darling(attributes(namewise))]
 struct Params {
     ident: Ident,
-    data: darling::ast::Data<(), Field>,
+    data: darling::ast::Data<Variant, Field>,
     #[darling(multiple, rename = "from")]
     from_types: Vec<Ident>,
 }
@@ -23,10 +23,12 @@ pub fn derive_namewise_from(ts: TokenStream) -> TokenStream {
         .from_types
         .into_iter()
         .map(|source| match params.data.clone() {
-            darling::ast::Data::Struct(s) => {
-                derive_namewise_from_struct(destination.clone(), source, s.fields)
+            darling::ast::Data::Struct(fields) => {
+                derive_namewise_from_struct(destination.clone(), source, fields.fields)
             }
-            _ => panic!("Deriving namewise::From only works on structs"),
+            darling::ast::Data::Enum(variants) => {
+                derive_namewise_from_enum(destination.clone(), source, variants)
+            }
         })
         .collect();
 
@@ -41,23 +43,49 @@ fn derive_namewise_from_struct(
     source: Ident,
     fields: Vec<Field>,
 ) -> proc_macro2::TokenStream {
-    let field_idents = fields
+    let field_names = fields
         .into_iter()
-        .map(|field| field.ident.expect("Encountered a field without an ident"));
+        .map(|field| field.ident.expect("Encountered an unnamed field"));
 
-    let field_mappings: Vec<proc_macro2::TokenStream> = field_idents
-        .map(|field_ident| {
+    let field_mappings: Vec<proc_macro2::TokenStream> = field_names
+        .map(|field_name| {
             quote! {
-                #field_ident: s.#field_ident.into()
+                #field_name: s.#field_name.into()
             }
         })
         .collect();
 
     quote! {
-        impl std::convert::From<#source> for #destination{
+        impl ::std::convert::From<#source> for #destination{
             fn from(s: #source) -> #destination {
                 #destination {
                     #(#field_mappings),*
+                }
+            }
+        }
+    }
+}
+
+fn derive_namewise_from_enum(
+    destination: Ident,
+    source: Ident,
+    variants: Vec<Variant>,
+) -> proc_macro2::TokenStream {
+    let variant_names = variants.into_iter().map(|variant| variant.ident);
+
+    let variant_mappings: Vec<proc_macro2::TokenStream> = variant_names
+        .map(|name| {
+            quote! {
+                #source::#name => #destination::#name
+            }
+        })
+        .collect();
+
+    quote! {
+        impl ::std::convert::From<#source> for #destination{
+            fn from(s: #source) -> #destination {
+                match s {
+                    #(#variant_mappings),*
                 }
             }
         }

@@ -15,7 +15,7 @@ pub struct DestinationB {
 }
 
 #[test]
-fn test_namewise_from() {
+fn test_namewise_from_struct() {
     let source = SourceA {
         a: "A".to_string(),
         text: "arb-text",
