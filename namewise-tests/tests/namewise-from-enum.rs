@@ -16,7 +16,7 @@ pub enum DestinationB {
 }
 
 #[test]
-fn test_namewise_from_enum() {
+fn test_derive_from_enum() {
     assert_eq!(DestinationB::from(SourceA::First), DestinationB::First);
     assert_eq!(DestinationB::from(SourceA::Second), DestinationB::Second);
     assert_eq!(DestinationB::from(SourceA::Third), DestinationB::Third);

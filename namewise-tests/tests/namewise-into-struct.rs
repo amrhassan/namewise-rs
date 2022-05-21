@@ -1,13 +1,11 @@
-#[derive(Clone)]
+#[derive(Clone, namewise::Into)]
+#[namewise(into = "crate::DestinationB")]
 pub struct SourceA {
     a: String,
     text: &'static str,
-    _y: i32,
     number: i16,
 }
 
-#[derive(namewise::From)]
-#[namewise(from = "crate::SourceA")]
 pub struct DestinationB {
     a: String,
     text: String,
@@ -15,11 +13,10 @@ pub struct DestinationB {
 }
 
 #[test]
-fn test_derive_from_struct() {
+fn test_derive_into_struct() {
     let source = SourceA {
         a: "A".to_string(),
         text: "arb-text",
-        _y: 23,
         number: 42,
     };
     let cloned_source = source.clone();
