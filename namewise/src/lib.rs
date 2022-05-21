@@ -1,7 +1,7 @@
 use darling::FromDeriveInput;
 use proc_macro::TokenStream;
 use quote::quote;
-use syn::{parse_macro_input, DeriveInput, Field, Ident, Variant};
+use syn::{parse_macro_input, DeriveInput, Field, Ident, Type, Variant};
 
 #[derive(FromDeriveInput)]
 #[darling(attributes(namewise))]
@@ -9,7 +9,7 @@ struct Params {
     ident: Ident,
     data: darling::ast::Data<Variant, Field>,
     #[darling(multiple, rename = "from")]
-    from_types: Vec<Ident>,
+    from_types: Vec<Type>,
 }
 
 #[proc_macro_derive(From, attributes(namewise))]
@@ -40,7 +40,7 @@ pub fn derive_namewise_from(ts: TokenStream) -> TokenStream {
 
 fn derive_namewise_from_struct(
     destination: Ident,
-    source: Ident,
+    source: Type,
     fields: Vec<Field>,
 ) -> proc_macro2::TokenStream {
     let field_names = fields
@@ -68,7 +68,7 @@ fn derive_namewise_from_struct(
 
 fn derive_namewise_from_enum(
     destination: Ident,
-    source: Ident,
+    source: Type,
     variants: Vec<Variant>,
 ) -> proc_macro2::TokenStream {
     let variant_names = variants.into_iter().map(|variant| variant.ident);

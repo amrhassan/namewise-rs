@@ -7,7 +7,7 @@ pub enum SourceA {
 }
 
 #[derive(namewise::From, PartialEq, Eq, Debug)]
-#[namewise(from = "SourceA")]
+#[namewise(from = "crate::SourceA")]
 pub enum DestinationB {
     First,
     Second,

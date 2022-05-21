@@ -7,7 +7,7 @@ pub struct SourceA {
 }
 
 #[derive(namewise::From)]
-#[namewise(from = "SourceA")]
+#[namewise(from = "crate::SourceA")]
 pub struct DestinationB {
     a: String,
     text: String,
