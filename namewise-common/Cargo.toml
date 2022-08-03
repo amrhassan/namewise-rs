@@ -1,12 +1,12 @@
 [package]
-name = "namewise"
+name = "namewise-common"
 version = "1.0.1"
 edition = "2021"
 repository = "https://github.com/amrhassan/namewise-rs"
 homepage = "https://github.com/amrhassan/namewise-rs"
 license = "MIT"
 description = "Derived trivial name-wise conversions for Rust types"
+publish = false
 
 [dependencies]
-namewise-derive = { path = "../namewise-derive", version = "1.0.1" }
-namewise-common = { path = "../namewise-common", version = "1.0.1" }
+strum = { version = "0", features = ["derive"] }
