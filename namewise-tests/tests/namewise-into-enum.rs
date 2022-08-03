@@ -1,5 +1,5 @@
 #[derive(Clone, Copy, namewise::Into)]
-#[namewise(into = "crate::DestinationB")]
+#[namewise_into(into_type = "crate::DestinationB")]
 pub enum SourceA {
     First,
     Second,

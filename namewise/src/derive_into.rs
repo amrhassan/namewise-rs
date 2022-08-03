@@ -10,7 +10,7 @@ pub fn derive_namewise_into(ts: TokenStream) -> TokenStream {
     let destination = params.ident;
 
     let impls: Vec<proc_macro2::TokenStream> = params
-        .into_types
+        .types
         .into_iter()
         .map(|source| match params.data.clone() {
             darling::ast::Data::Struct(fields) => {
@@ -29,12 +29,12 @@ pub fn derive_namewise_into(ts: TokenStream) -> TokenStream {
 }
 
 #[derive(FromDeriveInput)]
-#[darling(attributes(namewise))]
+#[darling(attributes(namewise_into))]
 struct Params {
     ident: Ident,
     data: darling::ast::Data<Variant, Field>,
-    #[darling(multiple, rename = "into")]
-    into_types: Vec<Type>,
+    #[darling(multiple, rename="into_type")]
+    types: Vec<Type>,
 }
 
 fn derive_struct(source: Ident, destination: Type, fields: Vec<Field>) -> proc_macro2::TokenStream {

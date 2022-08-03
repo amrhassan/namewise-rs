@@ -1,5 +1,5 @@
 #[derive(Clone, namewise::Into)]
-#[namewise(into = "crate::DestinationB")]
+#[namewise_into(into_type = "crate::DestinationB")]
 pub struct SourceA {
     a: String,
     text: &'static str,
