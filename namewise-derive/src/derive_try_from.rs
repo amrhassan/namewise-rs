@@ -32,14 +32,14 @@ pub fn derive_namewise_try_from(ts: TokenStream) -> TokenStream {
 #[darling(attributes(namewise_try_from))]
 struct Params {
     ident: Ident,
-    data: darling::ast::Data<Variant, TryFromField>,
+    data: darling::ast::Data<Variant, NTryFromField>,
     #[darling(multiple, rename = "try_from_type")]
     types: Vec<Type>,
 }
 
 #[derive(Debug, Clone, FromField)]
 #[darling(attributes(namewise_try_from))]
-struct TryFromField {
+struct NTryFromField {
     ident: Option<Ident>,
     #[darling(default)]
     optional: bool,
@@ -50,7 +50,7 @@ struct TryFromField {
 fn derive_struct(
     destination: Ident,
     source: Type,
-    fields: Vec<TryFromField>,
+    fields: Vec<NTryFromField>,
 ) -> proc_macro2::TokenStream {
     let field_mappings: Vec<proc_macro2::TokenStream> = fields
         .into_iter()

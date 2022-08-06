@@ -1,7 +1,7 @@
-use darling::FromDeriveInput;
+use darling::{FromDeriveInput, FromField};
 use proc_macro::TokenStream;
 use quote::quote;
-use syn::{parse_macro_input, DeriveInput, Field, Ident, Type, Variant};
+use syn::{parse_macro_input, parse_quote, DeriveInput, Ident, Type, Variant};
 
 pub fn derive_namewise_into(ts: TokenStream) -> TokenStream {
     let derive_input = parse_macro_input!(ts as DeriveInput);
@@ -32,20 +32,34 @@ pub fn derive_namewise_into(ts: TokenStream) -> TokenStream {
 #[darling(attributes(namewise_into))]
 struct Params {
     ident: Ident,
-    data: darling::ast::Data<Variant, Field>,
+    data: darling::ast::Data<Variant, NIntoField>,
     #[darling(multiple, rename = "into_type")]
     types: Vec<Type>,
 }
 
-fn derive_struct(source: Ident, destination: Type, fields: Vec<Field>) -> proc_macro2::TokenStream {
-    let field_names = fields
-        .into_iter()
-        .map(|field| field.ident.expect("Encountered an unnamed field"));
+#[derive(Debug, Clone, FromField)]
+#[darling(attributes(namewise_into))]
+struct NIntoField {
+    ident: Option<Ident>,
+    into_name: Option<Ident>,
+    mapper: Option<Type>,
+}
 
-    let field_mappings: Vec<proc_macro2::TokenStream> = field_names
-        .map(|field_name| {
+fn derive_struct(
+    source: Ident,
+    destination: Type,
+    fields: Vec<NIntoField>,
+) -> proc_macro2::TokenStream {
+    let field_mappings: Vec<proc_macro2::TokenStream> = fields
+        .into_iter()
+        .map(|field| {
+            let field_name = field.ident.expect("Encountered an unnamed field");
+            let into_name = field.into_name.unwrap_or_else(|| field_name.clone());
+            let mapper = field
+                .mapper
+                .unwrap_or_else(|| parse_quote!(std::convert::identity));
             quote! {
-                #field_name: self.#field_name.into()
+                #into_name: #mapper(self.#field_name).into()
             }
         })
         .collect();
