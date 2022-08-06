@@ -9,7 +9,7 @@ pub fn derive_namewise_from(ts: TokenStream) -> TokenStream {
     derive_from::derive_namewise_from(ts)
 }
 
-#[proc_macro_derive(TryFrom, attributes(namewise_try_from, namewise_try_from_option))]
+#[proc_macro_derive(TryFrom, attributes(namewise_try_from))]
 pub fn derive_namewise_try_from(ts: TokenStream) -> TokenStream {
     derive_try_from::derive_namewise_try_from(ts)
 }

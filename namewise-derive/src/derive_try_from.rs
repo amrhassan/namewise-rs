@@ -1,7 +1,7 @@
-use darling::FromDeriveInput;
+use darling::{FromDeriveInput, FromField};
 use proc_macro::TokenStream;
-use quote::{format_ident, quote};
-use syn::{parse_macro_input, DeriveInput, Field, Ident, Type, Variant};
+use quote::quote;
+use syn::{parse_macro_input, DeriveInput, Ident, Type, Variant};
 
 pub fn derive_namewise_try_from(ts: TokenStream) -> TokenStream {
     let derive_input = parse_macro_input!(ts as DeriveInput);
@@ -29,35 +29,44 @@ pub fn derive_namewise_try_from(ts: TokenStream) -> TokenStream {
 }
 
 #[derive(FromDeriveInput)]
-#[darling(attributes(namewise_try_from, namewise_try_from_option))]
+#[darling(attributes(namewise_try_from))]
 struct Params {
     ident: Ident,
-    data: darling::ast::Data<Variant, Field>,
+    data: darling::ast::Data<Variant, TryFromField>,
     #[darling(multiple, rename = "try_from_type")]
     types: Vec<Type>,
 }
 
-fn derive_struct(destination: Ident, source: Type, fields: Vec<Field>) -> proc_macro2::TokenStream {
+#[derive(Debug, Clone, FromField)]
+#[darling(attributes(namewise_try_from))]
+struct TryFromField {
+    ident: Option<Ident>,
+    #[darling(default)]
+    optional: bool,
+    from_name: Option<syn::Ident>,
+}
+
+fn derive_struct(
+    destination: Ident,
+    source: Type,
+    fields: Vec<TryFromField>,
+) -> proc_macro2::TokenStream {
     let field_mappings: Vec<proc_macro2::TokenStream> = fields
         .into_iter()
         .map(|field| {
             let field_name = field.ident.expect("Encountered an unnamed field");
-            let from_option = field.attrs.iter().any(|attr| {
-                attr.path
-                    .segments
-                    .iter()
-                    .any(|segment| segment.ident == format_ident!("namewise_try_from_option"))
-            });
+            let from_option = field.optional;
+            let from_name = field.from_name.unwrap_or_else(|| field_name.clone());
             if from_option {
                 quote! {
-                    #field_name: s.#field_name
+                    #field_name: s.#from_name
                       .ok_or_else(|| ::namewise::NamewiseError::MissingField(
                           format!("Value {}.{} is missing", stringify!(#source), stringify!(#field_name))))?
                       .try_into()?
                 }
             } else {
                 quote! {
-                    #field_name: s.#field_name.into()
+                    #field_name: s.#from_name.into()
                 }
             }
         })

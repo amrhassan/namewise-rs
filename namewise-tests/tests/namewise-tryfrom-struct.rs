@@ -5,7 +5,7 @@ pub struct SourceA {
     a: String,
     text: &'static str,
     _y: i32,
-    number: Option<i16>,
+    numeric: Option<i16>,
 }
 
 #[derive(namewise::TryFrom, Clone)]
@@ -13,7 +13,7 @@ pub struct SourceA {
 pub struct DestinationB {
     a: String,
     text: String,
-    #[namewise_try_from_option]
+    #[namewise_try_from(optional, from_name = "numeric")]
     number: i64,
 }
 
@@ -23,7 +23,7 @@ fn test_derive_try_from_struct() {
         a: "A".to_string(),
         text: "arb-text",
         _y: 23,
-        number: Some(12),
+        numeric: Some(12),
     };
     let cloned_source = source.clone();
 
@@ -35,7 +35,7 @@ fn test_derive_try_from_struct() {
         destination.clone().unwrap().text.as_str()
     );
     assert_eq!(
-        cloned_source.number.unwrap() as i64,
+        cloned_source.numeric.unwrap() as i64,
         destination.unwrap().number
     );
 }
