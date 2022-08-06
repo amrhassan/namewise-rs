@@ -9,4 +9,4 @@ description = "Derived trivial name-wise conversions for Rust types"
 
 [dependencies]
 namewise-derive = { path = "../namewise-derive", version = "1.0.1" }
-namewise-common = { path = "../namewise-common", version = "1.0.1" }
+namewise-common = { path = "../namewise-common", version = "2.0.0" }
