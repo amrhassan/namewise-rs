@@ -4,7 +4,7 @@ use namewise::NamewiseError;
 pub struct SourceA {
     a: String,
     text: &'static str,
-    _y: i32,
+    y: i32,
     numeric: Option<i16>,
 }
 
@@ -15,6 +15,12 @@ pub struct DestinationB {
     text: String,
     #[namewise_try_from(optional, from_name = "numeric")]
     number: i64,
+    #[namewise_try_from(mapper = "y_mapper")]
+    y: String,
+}
+
+fn y_mapper(y: i32) -> String {
+    y.to_string()
 }
 
 #[test]
@@ -22,7 +28,7 @@ fn test_derive_try_from_struct() {
     let source = SourceA {
         a: "A".to_string(),
         text: "arb-text",
-        _y: 23,
+        y: 23,
         numeric: Some(12),
     };
     let cloned_source = source.clone();
@@ -36,6 +42,7 @@ fn test_derive_try_from_struct() {
     );
     assert_eq!(
         cloned_source.numeric.unwrap() as i64,
-        destination.unwrap().number
+        destination.clone().unwrap().number
     );
+    assert_eq!(cloned_source.y.to_string(), destination.clone().unwrap().y);
 }
