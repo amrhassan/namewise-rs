@@ -6,7 +6,6 @@ repository = "https://github.com/amrhassan/namewise-rs"
 homepage = "https://github.com/amrhassan/fieldwise-rs"
 license = "MIT"
 description = "Derived trivial name-wise conversions for Rust types"
-publish = false
 
 [lib]
 proc-macro = true
