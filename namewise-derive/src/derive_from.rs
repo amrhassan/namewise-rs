@@ -14,10 +14,10 @@ pub fn derive_namewise_from(ts: TokenStream) -> TokenStream {
         .into_iter()
         .map(|source| match params.data.clone() {
             darling::ast::Data::Struct(fields) => {
-                derive_struct(destination.clone(), source, fields.fields)
+                derive_struct(source, destination.clone(), fields.fields)
             }
             darling::ast::Data::Enum(variants) => {
-                derive_enum(destination.clone(), source, variants)
+                derive_enum(source, destination.clone(), variants)
             }
         })
         .collect();
@@ -46,8 +46,8 @@ struct NFromField {
 }
 
 fn derive_struct(
-    destination: Ident,
     source: Type,
+    destination: Ident,
     fields: Vec<NFromField>,
 ) -> proc_macro2::TokenStream {
     let field_mappings: Vec<proc_macro2::TokenStream> = fields
@@ -67,7 +67,7 @@ fn derive_struct(
     quote! {
         #[automatically_derived]
         impl ::std::convert::From<#source> for #destination{
-            fn from(s: #source) -> #destination {
+            fn from(s: #source) -> Self {
                 #destination {
                     #(#field_mappings),*
                 }
@@ -77,8 +77,8 @@ fn derive_struct(
 }
 
 fn derive_enum(
-    destination: Ident,
     source: Type,
+    destination: Ident,
     variants: Vec<Variant>,
 ) -> proc_macro2::TokenStream {
     let variant_names = variants.into_iter().map(|variant| variant.ident);

@@ -7,17 +7,17 @@ pub fn derive_namewise_into(ts: TokenStream) -> TokenStream {
     let derive_input = parse_macro_input!(ts as DeriveInput);
     let params = Params::from_derive_input(&derive_input).expect("Failed to parse inputs");
 
-    let destination = params.ident;
+    let source = params.ident;
 
     let impls: Vec<proc_macro2::TokenStream> = params
         .types
         .into_iter()
-        .map(|source| match params.data.clone() {
+        .map(|destination| match params.data.clone() {
             darling::ast::Data::Struct(fields) => {
-                derive_struct(destination.clone(), source, fields.fields)
+                derive_struct(source.clone(), destination, fields.fields)
             }
             darling::ast::Data::Enum(variants) => {
-                derive_enum(destination.clone(), source, variants)
+                derive_enum(source.clone(), destination, variants)
             }
         })
         .collect();
@@ -66,7 +66,7 @@ fn derive_struct(
 
     quote! {
         #[automatically_derived]
-        impl ::std::convert::Into<#destination> for #source{
+        impl ::std::convert::Into<#destination> for #source {
             fn into(self) -> #destination {
                 #destination {
                     #(#field_mappings),*
