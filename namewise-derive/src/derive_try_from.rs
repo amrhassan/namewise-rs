@@ -51,7 +51,7 @@ fn derive_struct(destination: Ident, source: Type, fields: Vec<Field>) -> proc_m
             if from_option {
                 quote! {
                     #field_name: s.#field_name
-                      .ok_or_else(|| NamewiseError::MissingField(
+                      .ok_or_else(|| ::namewise::NamewiseError::MissingField(
                           format!("Value {}.{} is missing", stringify!(#source), stringify!(#field_name))))?
                       .try_into()?
                 }
