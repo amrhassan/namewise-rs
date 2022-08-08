@@ -9,3 +9,4 @@ description = "Derived trivial name-wise conversions for Rust types"
 
 [dependencies]
 strum = { version = "0", features = ["derive"] }
+thiserror = "1"
