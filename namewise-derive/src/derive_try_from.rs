@@ -64,12 +64,12 @@ fn derive_struct(
                     #field_name: {
                         let err_message = || ::namewise::NamewiseError::MissingField(format!("Value {}.{} is missing", stringify!(#source), stringify!(#field_name)));
                         let src_value = s.#from_name.ok_or_else(err_message)?;
-                        #mapper(src_value).try_into()?
+                        #mapper(src_value).try_into().map_err(|err| NamewiseError::Generic(::std::boxed::Box::new(err)))?
                     }
                 }
             } else {
                 quote! {
-                    #field_name: #mapper(s.#from_name).try_into()?
+                    #field_name: #mapper(s.#from_name).try_into().map_err(|err| NamewiseError::Generic(::std::boxed::Box::new(err)))?
                 }
             }
         })

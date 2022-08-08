@@ -1,9 +1,10 @@
 use std::convert::Infallible;
 
-#[derive(Debug, Clone, strum::Display)]
+#[derive(Debug, strum::Display, thiserror::Error)]
 pub enum NamewiseError {
     #[strum(serialize = "_0")]
     MissingField(String),
+    Generic(Box<dyn std::error::Error>),
 }
 
 impl From<Infallible> for NamewiseError {
@@ -12,4 +13,3 @@ impl From<Infallible> for NamewiseError {
     }
 }
 
-impl std::error::Error for NamewiseError {}

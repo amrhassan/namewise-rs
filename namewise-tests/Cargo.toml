@@ -4,5 +4,9 @@ version = "0.0.0"
 edition = "2021"
 publish = false
 
+[dev-dependencies]
+strum = { version = "0", features = ["derive"] }
+thiserror = "1"
+
 [dependencies]
 namewise = { path = "../namewise" }
