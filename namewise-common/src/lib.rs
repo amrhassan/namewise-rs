@@ -4,7 +4,7 @@ use std::convert::Infallible;
 pub enum NamewiseError {
     #[strum(serialize = "_0")]
     MissingField(String),
-    Generic(Box<dyn std::error::Error>),
+    Generic(Box<dyn std::error::Error + Send + Sync>),
 }
 
 impl From<Infallible> for NamewiseError {
@@ -12,4 +12,3 @@ impl From<Infallible> for NamewiseError {
         panic!("An Infallible should never happen")
     }
 }
-

@@ -50,7 +50,9 @@ impl TryFrom<SourceField> for TargetField {
         if value == SourceField::B {
             Ok(TargetField::B)
         } else {
-            Err(FieldError::Catastrophic(format!("Unmatched source variant: {value:?}")))
+            Err(FieldError::Catastrophic(format!(
+                "Unmatched source variant: {value:?}"
+            )))
         }
     }
 }
