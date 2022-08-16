@@ -7,6 +7,7 @@ pub struct SourceA {
     y: i32,
     numeric: Option<i16>,
     z: SourceField,
+    missing: Option<String>,
 }
 
 #[derive(namewise::TryFrom, Clone)]
@@ -19,6 +20,8 @@ pub struct DestinationB {
     #[namewise_try_from(mapper = "y_mapper")]
     y: String,
     z: TargetField,
+    #[namewise_try_from(optional, default_value = "\"present\".to_string()")]
+    missing: String,
 }
 
 fn y_mapper(y: i32) -> String {
@@ -65,6 +68,7 @@ fn test_derive_try_from_struct() {
         y: 23,
         numeric: Some(12),
         z: SourceField::B,
+        missing: None,
     };
     let cloned_source = source.clone();
 
@@ -79,4 +83,5 @@ fn test_derive_try_from_struct() {
     );
     assert_eq!(cloned_source.y.to_string(), destination.clone().y);
     assert_eq!(TargetField::B, destination.clone().z);
+    assert_eq!(destination.missing, "present".to_string());
 }

@@ -1,7 +1,7 @@
 use darling::{FromDeriveInput, FromField};
 use proc_macro::TokenStream;
 use quote::quote;
-use syn::{parse_macro_input, parse_quote, DeriveInput, Ident, Type, Variant};
+use syn::{parse_macro_input, parse_quote, DeriveInput, Expr, Ident, Type, Variant};
 
 pub fn derive_namewise_try_from(ts: TokenStream) -> TokenStream {
     let derive_input = parse_macro_input!(ts as DeriveInput);
@@ -45,6 +45,7 @@ struct NTryFromField {
     optional: bool,
     from_name: Option<Ident>,
     mapper: Option<Type>,
+    default_value: Option<Expr>,
 }
 
 fn derive_struct(
@@ -57,13 +58,17 @@ fn derive_struct(
         .map(|field| {
             let field_name = field.ident.expect("Encountered an unnamed field");
             let from_option = field.optional;
+            let default_value: Option<Expr> = match field.default_value {
+                Some(expr) => Some(parse_quote!(Some(#expr))),
+                None => Some(parse_quote!(None)),
+            };
             let from_name = field.from_name.unwrap_or_else(|| field_name.clone());
             let mapper = field.mapper.unwrap_or_else(|| parse_quote!(std::convert::identity));
             if from_option {
                 quote! {
                     #field_name: {
                         let err_message = || ::namewise::NamewiseError::MissingField(format!("Value {}.{} is missing", stringify!(#source), stringify!(#field_name)));
-                        let src_value = s.#from_name.ok_or_else(err_message)?;
+                        let src_value = s.#from_name.or(#default_value).ok_or_else(err_message)?;
                         #mapper(src_value).try_into().map_err(|err| ::namewise::NamewiseError::Generic(::std::boxed::Box::new(err)))?
                     }
                 }

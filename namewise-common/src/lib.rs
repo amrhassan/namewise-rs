@@ -2,9 +2,9 @@ use std::convert::Infallible;
 
 #[derive(Debug, derive_more::Display, thiserror::Error)]
 pub enum NamewiseError {
-    #[display(fmt= "Missing field error: {_0}")]
+    #[display(fmt = "Missing field error: {_0}")]
     MissingField(String),
-    #[display(fmt= "Generic error: {_0}")]
+    #[display(fmt = "Generic error: {_0}")]
     Generic(Box<dyn std::error::Error + Send + Sync>),
 }
 
