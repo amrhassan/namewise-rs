@@ -1,2 +1,11 @@
 [workspace]
 members = ["namewise", "namewise-derive", "namewise-common", "namewise-tests"]
+
+[workspace.dependencies]
+darling = "0"
+derive_more = "0"
+itertools = "0"
+proc-macro2 = "1"
+quote = "1"
+syn = "1"
+thiserror = "1"

@@ -8,5 +8,6 @@ license = "MIT"
 description = "Derived trivial name-wise conversions for Rust types"
 
 [dependencies]
-derive_more = { version = "0" }
-thiserror = "1"
+derive_more = { workspace = true }
+thiserror = { workspace = true }
+
