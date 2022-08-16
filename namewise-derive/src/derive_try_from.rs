@@ -41,10 +41,18 @@ struct Params {
 #[darling(attributes(namewise_try_from))]
 struct NTryFromField {
     ident: Option<Ident>,
+
+    /// If set, enables converting from `Option` values. Failing when the source field is `None`.
     #[darling(default)]
     optional: bool,
+
+    /// Convert from a field by this name instead of the name of the target field
     from_name: Option<Ident>,
+
+    /// If specified, uses the given mapper function to map the source value before final conversion.
     mapper: Option<Type>,
+
+    /// If converting from an option, uses this expression for the `None` case instead of failing.
     default_value: Option<Expr>,
 }
 
