@@ -1,6 +1,6 @@
 [package]
 name = "namewise"
-version = "2.4.0"
+version = "2.5.0"
 edition = "2021"
 repository = "https://github.com/amrhassan/namewise-rs"
 homepage = "https://github.com/amrhassan/namewise-rs"
