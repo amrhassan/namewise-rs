@@ -8,5 +8,5 @@ license = "MIT"
 description = "Derived trivial name-wise conversions for Rust types"
 
 [dependencies]
-strum = { version = "0", features = ["derive"] }
+derive_more = { version = "0" }
 thiserror = "1"
