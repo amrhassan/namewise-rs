@@ -1,7 +1,7 @@
 use darling::{FromDeriveInput, FromField};
 use proc_macro::TokenStream;
 use quote::quote;
-use syn::{parse_macro_input, parse_quote, DeriveInput, Ident, Type, Variant};
+use syn::{parse_macro_input, DeriveInput, Ident, Type, Variant};
 
 pub fn derive_namewise_into(ts: TokenStream) -> TokenStream {
     let derive_input = parse_macro_input!(ts as DeriveInput);
@@ -40,9 +40,14 @@ struct Params {
 #[derive(Debug, Clone, FromField)]
 #[darling(attributes(namewise_into))]
 struct NIntoField {
+    /// Source field name
     ident: Option<Ident>,
+    /// Destination field name, otherwise same as source
     into_name: Option<Ident>,
+    /// Mapper function over the source field
     mapper: Option<Type>,
+    /// Treat source field as iterable that has `IntoIterator` impl with a corresponding `FromIterator` on the target
+    collect: Option<bool>,
 }
 
 fn derive_struct(
@@ -55,11 +60,27 @@ fn derive_struct(
         .map(|field| {
             let field_name = field.ident.expect("Encountered an unnamed field");
             let into_name = field.into_name.unwrap_or_else(|| field_name.clone());
-            let mapper = field
-                .mapper
-                .unwrap_or_else(|| parse_quote!(std::convert::identity));
-            quote! {
-                #into_name: #mapper(self.#field_name).into()
+            match (field.mapper, field.collect.unwrap_or_default()) {
+                (None, false) => {
+                    quote! {
+                        #into_name: self.#field_name.into()
+                    }
+                }
+                (Some(mapper), false) => {
+                    quote! {
+                        #into_name: #mapper(self.#field_name).into()
+                    }
+                }
+                (None, true) => {
+                    quote! {
+                        #into_name: self.#field_name.into_iter().map(|v| v.into()).collect()
+                    }
+                }
+                (Some(mapper), true) => {
+                    quote! {
+                        #into_name: self.#field_name.into_iter().map(|v| #mapper(v)).collect()
+                    }
+                }
             }
         })
         .collect();

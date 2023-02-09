@@ -1,9 +1,12 @@
+use std::collections::HashSet;
+
 #[derive(Clone)]
 pub struct SourceA {
     a: String,
     text: &'static str,
     _y: i32,
     numeric: i16,
+    truths: Vec<bool>,
 }
 
 #[derive(namewise::From)]
@@ -15,6 +18,8 @@ pub struct DestinationB {
     number: i64,
     #[namewise_from(from_name = "numeric", mapper = "numeric_mapper")]
     s_number: String,
+    #[namewise_from(collect)]
+    truths: HashSet<bool>,
 }
 
 fn numeric_mapper(n: i16) -> String {
@@ -28,6 +33,7 @@ fn test_derive_from_struct() {
         text: "arb-text",
         _y: 23,
         numeric: 42,
+        truths: vec![false, true, true, true, false, true],
     };
     let cloned_source = source.clone();
 
@@ -37,4 +43,5 @@ fn test_derive_from_struct() {
     assert_eq!(cloned_source.text, destination.text.as_str());
     assert_eq!(cloned_source.numeric as i64, destination.number);
     assert_eq!(cloned_source.numeric.to_string(), destination.s_number);
+    assert_eq!(destination.truths.len(), 2);
 }
