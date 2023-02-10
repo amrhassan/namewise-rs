@@ -2,7 +2,14 @@
 Derive trivial transformations between fields that are mostly unpacking and converting
 similarly-nemd fields from a source into a target.
 
-Example usage:
+## How to use
+
+1. Add to a cargo project:
+```
+cargo add namewise
+```
+
+2. Use to derive trivial conversion impls for you.
 
 ```rust
 use namewise;
