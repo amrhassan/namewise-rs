@@ -1,4 +1,9 @@
 # namewise-rs
+[![docs.rs](https://img.shields.io/docsrs/namewise)](https://docs.rs/namewise/)
+[![crates.io](https://img.shields.io/crates/v/namewise.svg)](https://crates.io/crates/namewise)
+[![Test](https://github.com/amrhassan/namewise-rs/actions/workflows/main.yaml/badge.svg)](https://github.com/amrhassan/namewise-rs/actions/workflows/main.yaml)
+
+
 Derive trivial transformations between fields that are mostly unpacking and converting
 similarly-nemd fields from a source into a target.
 
