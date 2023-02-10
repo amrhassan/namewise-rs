@@ -9,4 +9,4 @@ strum = { version = "0", features = ["derive"] }
 thiserror = "1"
 
 [dependencies]
-namewise = { path = "../namewise", version = "2.6.1" }
+namewise = { path = "../namewise", version = "2.6.2" }

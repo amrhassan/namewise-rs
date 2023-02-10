@@ -1,6 +1,6 @@
 [package]
 name = "namewise-derive"
-version = "2.6.1"
+version = "2.6.2"
 edition = "2021"
 repository = "https://github.com/amrhassan/namewise-rs"
 homepage = "https://github.com/amrhassan/fieldwise-rs"
