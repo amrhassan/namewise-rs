@@ -29,7 +29,7 @@ pub fn derive_namewise_from(ts: TokenStream) -> TokenStream {
 }
 
 #[derive(FromDeriveInput)]
-#[darling(attributes(namewise_from))]
+#[darling(attributes(namewise_from), supports(struct_named, enum_named, enum_unit))]
 struct Params {
     ident: Ident,
     data: darling::ast::Data<Variant, NamewiseFromField>,
