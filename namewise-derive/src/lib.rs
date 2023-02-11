@@ -4,7 +4,6 @@ mod derive_try_from;
 
 use proc_macro::TokenStream;
 
-
 /// Derive [From] between two structs/enums with similarly-named fields
 #[proc_macro_derive(From, attributes(namewise_from))]
 pub fn derive_namewise_from(ts: TokenStream) -> TokenStream {
