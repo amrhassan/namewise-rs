@@ -8,5 +8,5 @@ license = "MIT"
 description = "Derived trivial name-wise conversions for Rust types"
 
 [dependencies]
-namewise-derive = { path = "../namewise-derive", version = "2.6.2" }
-namewise-common = { path = "../namewise-common", version = "2.6.2" }
+namewise-derive = { workspace = true }
+namewise-common = { workspace = true }
