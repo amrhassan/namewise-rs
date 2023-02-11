@@ -9,6 +9,3 @@ proc-macro2 = "1"
 quote = "1"
 syn = "1"
 thiserror = "1"
-namewise-derive = { path = "namewise-derive" }
-namewise-common = { path = "namewise-common" }
-namewise = { path = "namewise" }
