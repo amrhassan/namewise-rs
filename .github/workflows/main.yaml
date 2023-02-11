@@ -1,9 +1,7 @@
-name: Test (main)
+name: Test
 
 on:
   push:
-    branches: [ main ]
-  deployment:
     branches: [ main ]
 
 env:
@@ -28,7 +26,4 @@ jobs:
         command: build
         args: --all-features
     - name: Test
-      uses: actions-rs/cargo@v1
-      with:
-        command: test
-        args: --all-features
+      run: make test-ci

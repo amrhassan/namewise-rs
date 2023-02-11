@@ -1,0 +1,42 @@
+name: Create Release
+
+on:
+  create:
+    tags:
+      - v*
+
+jobs:
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - uses: Swatinem/rust-cache@v2
+    - name: Test
+      run: make test-ci
+
+  publish-crate:
+    needs: test
+    strategy:
+      fail-fast: true
+      max-parallel: 1
+      matrix:
+        crate: [namewise-common, namewise-derive, namewise]
+    name: Release
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - uses: Swatinem/rust-cache@v2
+    - uses: actions-rs/cargo@v1
+      with:
+        command: publish
+        args: -p ${{ matrix.crate }} --token ${{ secrets.CRATES_TOKEN }}
+
+  gh-release:
+    needs: test
+    name: Release
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Release
+      uses: softprops/action-gh-release@v1
