@@ -1,4 +1,4 @@
-.PHONY: format build test clippy test-ci kafka
+.PHONY: format build test clippy test-ci
 
 format:
 	cargo fmt
